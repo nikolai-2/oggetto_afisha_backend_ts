@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Channel {
+  id                  Int                   @id(map: "channel_pk") @unique(map: "channel_id_uindex") @default(autoincrement())
+  name                String
+  icon                String
+  ChannelSubscription ChannelSubscription[]
+}
+
+model ChannelSubscription {
+  id        Int      @id(map: "channelsubscription_pk") @unique(map: "channelsubscription_id_uindex") @default(autoincrement())
+  channelId Int?
+  userId    String?
+  Channel   Channel? @relation(fields: [channelId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsubscription_channel_id_fk")
+  GetUser      GetUser?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsubscription_user_id_fk")
+}
+
+model Event {
+  id                Int                 @id(map: "event_pk") @unique(map: "event_id_uindex") @default(autoincrement())
+  name              String
+  text              String
+  socialLink        String?
+  startDate         DateTime            @db.Timestamptz(6)
+  startEnd          DateTime?           @db.Timestamptz(6)
+  period            Int?
+  channelId         Int?
+  image             String
+  EventAssignations EventAssignations[]
+
+  @@index([startDate], map: "start_date_index")
+}
+
+model EventAssignations {
+  id      Int    @id(map: "eventassignations_pk") @unique(map: "eventassignations_id_uindex") @default(autoincrement())
+  eventId Int?
+  userId  String?
+  Event   Event? @relation(fields: [eventId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_event_id_fk")
+  GetUser    GetUser?  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_user_id_fk")
+}
+
+model GetUser {
+  id                  String                   @id(map: "user_pk") @unique(map: "user_id_uindex")
+  firstName           String
+  lastName            String
+  avatar              String
+  accessToken         String
+  ChannelSubscription ChannelSubscription[]
+  EventAssignations   EventAssignations[]
+}
