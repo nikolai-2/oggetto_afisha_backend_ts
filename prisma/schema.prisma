@@ -19,7 +19,7 @@ model ChannelSubscription {
   channelId Int?
   userId    String?
   Channel   Channel? @relation(fields: [channelId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsubscription_channel_id_fk")
-  GetUser      GetUser?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsubscription_user_id_fk")
+  GetUser      User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsubscription_user_id_fk")
 }
 
 model Event {
@@ -42,10 +42,10 @@ model EventAssignations {
   eventId Int?
   userId  String?
   Event   Event? @relation(fields: [eventId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_event_id_fk")
-  GetUser    GetUser?  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_user_id_fk")
+  GetUser    User?  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_user_id_fk")
 }
 
-model GetUser {
+model User {
   id                  String                   @id(map: "user_pk") @unique(map: "user_id_uindex")
   firstName           String
   lastName            String

@@ -14,7 +14,7 @@ export class AuthService {
     return this.userService.upsert(user);
   }
 
-  public async getToken(user: User): Promise<string> {
+  public getToken(user: User): string {
     return this.jwtService.sign({ id: user.id, sub: user.firstName });
   }
 }

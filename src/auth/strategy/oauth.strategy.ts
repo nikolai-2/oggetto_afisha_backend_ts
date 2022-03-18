@@ -1,5 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { User } from '../../user/types/user.type';
 
 export class OauthStrategy extends PassportStrategy(Strategy, 'google') {
   constructor() {
@@ -17,12 +18,13 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    const { name, photos } = profile;
-    const user = {
+    const { id, name, photos } = profile;
+    const user: User = {
+      id: id,
       firstName: name.givenName,
       lastName: name.familyName,
-      picture: photos[0].value,
-      accessToken,
+      avatar: photos[0].value,
+      accessToken: accessToken,
     };
     done(null, user);
   }

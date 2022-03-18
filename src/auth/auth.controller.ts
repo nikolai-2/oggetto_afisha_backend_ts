@@ -2,7 +2,7 @@ import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
-import { GetUser } from './decorator/user.decorator';
+import { UserFromReq } from './decorator/user.decorator';
 import { User } from '../user/types/user.type';
 import { AuthService } from './auth.service';
 
@@ -24,7 +24,7 @@ export class AuthController {
 
   @Get('redirect')
   @UseGuards(AuthGuard('google'))
-  public async redirect(@GetUser() user: User) {
+  public async redirect(@UserFromReq() user: User) {
     user = await this.authService.updateUser(user);
     return {
       user: user,
