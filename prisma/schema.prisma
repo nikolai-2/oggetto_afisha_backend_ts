@@ -10,8 +10,11 @@ datasource db {
 model Channel {
   id                  Int                   @id(map: "channel_pk") @unique(map: "channel_id_uindex") @default(autoincrement())
   name                String
+  image               String
+  text                String
   icon                String
   ChannelSubscription ChannelSubscription[]
+  Event               Event[]
 }
 
 model ChannelSubscription {
@@ -19,7 +22,7 @@ model ChannelSubscription {
   channelId Int?
   userId    String?
   Channel   Channel? @relation(fields: [channelId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsubscription_channel_id_fk")
-  GetUser      User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsubscription_user_id_fk")
+  User      User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "channelsubscription_user_id_fk")
 }
 
 model Event {
@@ -28,25 +31,27 @@ model Event {
   text              String
   socialLink        String?
   startDate         DateTime            @db.Timestamptz(6)
-  startEnd          DateTime?           @db.Timestamptz(6)
   period            Int?
   channelId         Int?
   image             String
+  endDate           DateTime?           @db.Timestamptz(6)
+  place             String
+  Channel           Channel?            @relation(fields: [channelId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_channel_id_fk")
   EventAssignations EventAssignations[]
 
   @@index([startDate], map: "start_date_index")
 }
 
 model EventAssignations {
-  id      Int    @id(map: "eventassignations_pk") @unique(map: "eventassignations_id_uindex") @default(autoincrement())
+  id      Int     @id(map: "eventassignations_pk") @unique(map: "eventassignations_id_uindex") @default(autoincrement())
   eventId Int?
   userId  String?
-  Event   Event? @relation(fields: [eventId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_event_id_fk")
-  GetUser    User?  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_user_id_fk")
+  Event   Event?  @relation(fields: [eventId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_event_id_fk")
+  User    User?   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_user_id_fk")
 }
 
 model User {
-  id                  String                   @id(map: "user_pk") @unique(map: "user_id_uindex")
+  id                  String                @id(map: "user_pk") @unique(map: "user_id_uindex")
   firstName           String
   lastName            String
   avatar              String

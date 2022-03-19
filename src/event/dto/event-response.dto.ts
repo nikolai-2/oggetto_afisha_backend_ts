@@ -1,4 +1,4 @@
-import { UserStack } from './user-stack.dto';
+import { UserStack } from '../../user/dto/user-stack.dto';
 import { EventCard } from './event-card.dto';
 
 export class EventResponse extends EventCard {

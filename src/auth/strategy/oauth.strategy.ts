@@ -1,6 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { User } from '../../user/types/user.type';
+import { User } from '../../user/type/user.type';
 
 export class OauthStrategy extends PassportStrategy(Strategy, 'google') {
   constructor() {

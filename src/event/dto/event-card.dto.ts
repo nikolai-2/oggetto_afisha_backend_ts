@@ -35,7 +35,7 @@ export class EventCard {
   /**
    * Event end date
    */
-  endDate: Date;
+  endDate?: Date;
 
   /**
    * Event period text

@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
 import { UserFromReq } from './decorator/user.decorator';
-import { User } from '../user/types/user.type';
+import { User } from '../user/type/user.type';
 import { AuthService } from './auth.service';
 
 @ApiTags('AUTH')
