@@ -46,12 +46,13 @@ model Event {
 }
 
 model EventAssignations {
-  id        Int      @id(map: "eventassignations_pk") @unique(map: "eventassignations_id_uindex") @default(autoincrement())
-  eventId   Int?
-  userId    String?
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  Event     Event?   @relation(fields: [eventId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_event_id_fk")
-  User      User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_user_id_fk")
+  id              Int      @id(map: "eventassignations_pk") @unique(map: "eventassignations_id_uindex") @default(autoincrement())
+  eventId         Int?
+  userId          String?
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  calendarEventId String?
+  Event           Event?   @relation(fields: [eventId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_event_id_fk")
+  User            User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_user_id_fk")
 }
 
 model User {

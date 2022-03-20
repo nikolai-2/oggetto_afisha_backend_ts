@@ -8,7 +8,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'google') {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: `${process.env.HOST}/auth/redirect`,
-      scope: ['profile'],
+      scope: ['profile', 'https://www.googleapis.com/auth/calendar'],
     });
   }
 

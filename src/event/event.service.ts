@@ -12,10 +12,15 @@ import { DateTime } from '../util/datetime';
 import lodash from '../util/lodash';
 import { User } from '../user/type/user.type';
 import moment from '../util/moment';
+import prisma from '../util/prisma';
+import { CalendarService } from 'src/calendar/calendar.service';
 
 @Injectable()
 export class EventService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly calendarService: CalendarService,
+  ) {}
 
   public async getById(id: number): Promise<Nullable<Event>> {
     return this.prisma.event.findUnique({
@@ -176,19 +181,34 @@ export class EventService {
   }
 
   public async assignToEvent(id: number, user: User): Promise<void> {
+    const event = await this.prisma.event.findUnique({
+      where: { id: id },
+    });
+
+    const calendarEventId = await this.calendarService.createEvent(event, user);
     await this.prisma.eventAssignations.create({
       data: {
         eventId: id,
         userId: user.id,
+        calendarEventId: calendarEventId,
       },
     });
   }
 
   public async assignCancelToEvent(id: number, user: User): Promise<void> {
-    await this.prisma.eventAssignations.deleteMany({
+    const [eventAssignation] = await this.prisma.eventAssignations.findMany({
       where: {
         eventId: id,
         userId: user.id,
+      },
+    });
+    await this.calendarService.deleteEvent(
+      eventAssignation.calendarEventId,
+      user,
+    );
+    await this.prisma.eventAssignations.delete({
+      where: {
+        id: eventAssignation.id,
       },
     });
   }

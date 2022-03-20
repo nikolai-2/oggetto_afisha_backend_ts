@@ -5,7 +5,7 @@ import moment from '../util/moment';
 @Controller('calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
-  @Get('debug')
+  /*@Get('debug')
   public async debug(): Promise<void> {
     await this.calendarService.createEvent({
       id: 1,
@@ -20,5 +20,5 @@ export class CalendarController {
       image: 'asdf',
       ownerId: 'sdfs',
     });
-  }
+  }*/
 }
