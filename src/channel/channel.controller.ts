@@ -10,13 +10,13 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { ChannelListResponse } from './dto/channel-item-response.dto';
 import { ChannelService } from './channel.service';
 import { UserFromReq } from '../auth/decorator/user.decorator';
 import { User } from '../user/type/user.type';
 import { ChannelCreateRequest } from './dto/channel-create-request.dto';
 import { ChannelResponse } from './dto/channel-response.dto';
 import { ChannelInfoResponse } from './dto/channel-info-response.dto';
+import { ChannelListResponse } from './dto/channel-list-response.dto';
 
 @Controller('channel')
 @ApiTags('CHANNEL')
@@ -28,8 +28,20 @@ export class ChannelController {
    * Return Channel list for authed player
    */
   @Get('list')
-  public async list(): Promise<ChannelListResponse[]> {
-    return this.channelService.getList();
+  public async list(@UserFromReq() user: User): Promise<ChannelListResponse> {
+    const data = await this.channelService.getList();
+    return {
+      subscribed: data.filter((record) =>
+        record.ChannelSubscription.some(
+          (subscription) => subscription.userId == user.id,
+        ),
+      ),
+      other: data.filter((record) =>
+        record.ChannelSubscription.some(
+          (subscription) => subscription.userId != user.id,
+        ),
+      ),
+    };
   }
 
   /**
@@ -64,6 +76,18 @@ export class ChannelController {
     @UserFromReq() user: User,
   ): Promise<void> {
     await this.channelService.subscribeToChannel(parseInt(id), user);
+  }
+
+  /**
+   * Unsubscribe to channel
+   */
+  @Post(':id/unsubscribe')
+  @HttpCode(200)
+  public async unsubscribe(
+    @Param('id') id: string,
+    @UserFromReq() user: User,
+  ): Promise<void> {
+    await this.channelService.subscribeCancelToChannel(parseInt(id), user);
   }
 
   @Put()

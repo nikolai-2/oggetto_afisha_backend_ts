@@ -30,24 +30,28 @@ model Event {
   name              String
   text              String
   socialLink        String?
-  startDate         DateTime            @db.Timestamptz(6)
+  startDate         DateTime            @db.Timestamp(6)
   period            Int?
   channelId         Int?
   image             String
-  endDate           DateTime?           @db.Timestamptz(6)
+  endDate           DateTime?           @db.Timestamp(6)
   place             String
+  ownerId           String?
   Channel           Channel?            @relation(fields: [channelId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_channel_id_fk")
+  User              User?               @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "event_user_id_fk")
   EventAssignations EventAssignations[]
+  EventTags         EventTags[]
 
   @@index([startDate], map: "start_date_index")
 }
 
 model EventAssignations {
-  id      Int     @id(map: "eventassignations_pk") @unique(map: "eventassignations_id_uindex") @default(autoincrement())
-  eventId Int?
-  userId  String?
-  Event   Event?  @relation(fields: [eventId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_event_id_fk")
-  User    User?   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_user_id_fk")
+  id        Int      @id(map: "eventassignations_pk") @unique(map: "eventassignations_id_uindex") @default(autoincrement())
+  eventId   Int?
+  userId    String?
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  Event     Event?   @relation(fields: [eventId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_event_id_fk")
+  User      User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventassignations_user_id_fk")
 }
 
 model User {
@@ -57,5 +61,22 @@ model User {
   avatar              String
   accessToken         String
   ChannelSubscription ChannelSubscription[]
+  Event               Event[]
   EventAssignations   EventAssignations[]
+}
+
+model EventTags {
+  id      Int    @id(map: "eventtags_pk") @unique(map: "eventtags_id_uindex") @default(autoincrement())
+  eventId Int?
+  tagId   Int?
+  Event   Event? @relation(fields: [eventId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventtags_event_id_fk")
+  Tags    Tags?  @relation(fields: [tagId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "eventtags_tags_id_fk")
+
+  @@unique([eventId, tagId], map: "eventtags_eventid_tagid_uindex")
+}
+
+model Tags {
+  id        Int         @id(map: "tags_pk") @unique(map: "tags_id_uindex") @default(autoincrement())
+  name      String
+  EventTags EventTags[]
 }

@@ -1,4 +1,4 @@
-export class ChannelListResponse {
+export class ChannelItemResponse {
   /**
    * Channel id
    *

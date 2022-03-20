@@ -7,6 +7,14 @@ export type EventWithChannel = Event & {
   Channel: Channel;
 };
 
+export type EventWithAssignations = Event & {
+  EventAssignations: Prisma.EventAssignations[];
+};
+
 export type EventWithUsers = Event & {
   users: User[];
+};
+
+export type EventWithTags = Event & {
+  tags: Prisma.Tags[];
 };

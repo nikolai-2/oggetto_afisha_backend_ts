@@ -30,8 +30,8 @@ export class EventController {
     const date = moment(listRequest.atDate);
 
     const [today, mostPopular, interested] = await Promise.all([
-      this.eventService.getToday(date),
-      this.eventService.mostPopular(date),
+      this.eventService.getToday(date, user),
+      this.eventService.mostPopular(date, user),
       this.eventService.interested(user, date),
     ]);
 
@@ -50,7 +50,7 @@ export class EventController {
     @Param('id') id: string,
     @UserFromReq() user: User,
   ): Promise<EventResponse> {
-    const { users, Channel, period, ...data } =
+    const { users, Channel, period, tags, ...data } =
       await this.eventService.getByIdWithUsers(parseInt(id));
     return {
       ...data,
@@ -61,6 +61,7 @@ export class EventController {
       assigned: !!users.find((assUser) => assUser.id == user.id),
       channel: Channel.name,
       period: PeriodProcessor.get(period || 0),
+      tags: tags.map((tag) => tag.name),
     };
   }
 
@@ -73,6 +74,17 @@ export class EventController {
     @UserFromReq() user: User,
   ): Promise<void> {
     await this.eventService.assignToEvent(parseInt(id), user);
+  }
+
+  /**
+   * Used for cancel assign user to event
+   */
+  @Post(':id/assign/cancel')
+  public async assignCancel(
+    @Param('id') id: string,
+    @UserFromReq() user: User,
+  ): Promise<void> {
+    await this.eventService.assignCancelToEvent(parseInt(id), user);
   }
 
   private prettyCard(event: EventWithChannel): EventCard {

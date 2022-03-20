@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Success</title>
+</head>
+<body>
+  <input id="token" value="{{token}}" hidden/>
+
+  <script>
+    let token = document.getElementById('token').value;
+    window.location.replace(window.location + `#token=${token}`);
+    window.close();
+  </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Render, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
@@ -29,6 +29,24 @@ export class AuthController {
     return {
       user: user,
       accessToken: this.authService.getToken(user),
+    };
+  }
+
+  /**
+   * Returns access token in js script
+   */
+  @Get('admin')
+  @UseGuards(AuthGuard('google-admin'))
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public authAdmin(): void {}
+
+  @Get('redirect-admin')
+  @UseGuards(AuthGuard('google-admin'))
+  @Render('oauth-admin')
+  public async redirectAdmin(@UserFromReq() user: User) {
+    user = await this.authService.updateUser(user);
+    return {
+      token: this.authService.getToken(user),
     };
   }
 

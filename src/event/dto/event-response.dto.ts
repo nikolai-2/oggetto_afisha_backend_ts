@@ -34,4 +34,11 @@ export class EventResponse extends EventCard {
    * @example false
    */
   assigned: boolean;
+
+  /**
+   * Array of tags
+   *
+   * @example ["Настолки", "Игры"]
+   */
+  tags: string[];
 }

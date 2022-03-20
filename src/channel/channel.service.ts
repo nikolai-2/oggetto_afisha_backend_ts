@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Channel, ChannelCreate, ChannelWithUsers } from './type/channel.type';
+import {
+  Channel,
+  ChannelCreate,
+  ChannelWithSubscription,
+  ChannelWithUsers,
+} from './type/channel.type';
 import { Nullable } from '../util/nullable';
 import { User } from '../user/type/user.type';
 
@@ -14,8 +19,12 @@ export class ChannelService {
     });
   }
 
-  public async getList(): Promise<Channel[]> {
-    return this.prisma.channel.findMany();
+  public async getList(): Promise<(Channel & ChannelWithSubscription)[]> {
+    return this.prisma.channel.findMany({
+      include: {
+        ChannelSubscription: true,
+      },
+    });
   }
 
   public async getByIdWithUsers(id: number): Promise<ChannelWithUsers> {
@@ -44,6 +53,15 @@ export class ChannelService {
   public async subscribeToChannel(id: number, user: User): Promise<void> {
     await this.prisma.channelSubscription.create({
       data: {
+        channelId: id,
+        userId: user.id,
+      },
+    });
+  }
+
+  public async subscribeCancelToChannel(id: number, user: User): Promise<void> {
+    await this.prisma.channelSubscription.deleteMany({
+      where: {
         channelId: id,
         userId: user.id,
       },

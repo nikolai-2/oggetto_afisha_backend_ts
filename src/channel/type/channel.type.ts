@@ -5,6 +5,10 @@ export type Channel = Prisma.Channel;
 
 export type ChannelCreate = Omit<Channel, 'id'>;
 
+export type ChannelWithSubscription = Channel & {
+  ChannelSubscription: Prisma.ChannelSubscription[];
+};
+
 export type ChannelWithUsers = Channel & {
   users: User[];
 };
